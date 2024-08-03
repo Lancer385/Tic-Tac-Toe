@@ -45,14 +45,36 @@ function gameController(){
     else {
       console.log("cell is already take, smh")
     }
-    for (i = 0; i < getBoard.length; i++){
-      if (allIsEqual(getBoard[i]) && getBoard[i][0] === "X"){
+    /* checks for rows
+    for (col = 0; col < getBoard.length; col++){
+      if (allIsEqual(getBoard[col]) && getBoard[col][0] === "X"){
         console.log("X Wins");
       }
-      else if (allIsEqual(getBoard[i]) && getBoard[i][0] === "O"){
+      else if (allIsEqual(getBoard[col]) && getBoard[col][0] === "O"){
         console.log(`O wins`);
       }
     }
+    */
+   /* checks for cols
+    for (col= 0; col < getBoard.length; col++){
+      let symbolRef = getBoard[col][0];
+      let win = true;
+      if (symbolRef === "X" || symbolRef === "O"){
+        for(row = 1; row < getBoard.length; row++){
+          if (symbolRef !== getBoard[row][col]){
+            win = false;
+            break;
+          }
+        }
+      }
+      else {
+        continue;
+      }
+      if (win){
+        console.log(`${symbolRef} wins`);
+      };
+    };
+    */
     printARound();
   };
 
@@ -63,5 +85,4 @@ function gameController(){
     getActivePlayer
   };
 };
-
 const game = gameController();
