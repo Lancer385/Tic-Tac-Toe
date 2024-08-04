@@ -11,7 +11,6 @@ function gameBoard(){
   const placeMark = (row, column, player) => {
       board[row][column] = player;
   };
-  console.log(board);
   const printBoard = () => {
     console.log(board);
   };
@@ -20,38 +19,48 @@ function gameBoard(){
 
 
 function gameController(){
-  const players = {
-    player1: "X",
-    player2: "O",
-  };
+  let playerOneName = "john";
+  let playerTwoName = "jasper";
+  const players = [
+  {
+  name: playerOneName,
+  symbol: "X"
+  }
+  , 
+  {
+    name: playerTwoName,
+    symbol: "O"
+  }
+  ];
   const board = gameBoard();
   const getBoard = board.getBoard();
   const allIsEqual = arr => arr.every(val => val === arr[0]);
 
-  let activePlayer = players.player1;
+  let activePlayer = players[0];
   const switchTurn = () => {
-  activePlayer = (activePlayer === players.player1)? players.player2 : players.player1;
+  activePlayer = (activePlayer === players[0])? players[1] : players[0];
   };
   const getActivePlayer = () => activePlayer;
   const printARound = () => {
     board.printBoard();
-    console.log(`${activePlayer} turn`);
+    console.log(getBoard[0][0]);
+    console.log(`${activePlayer.name}'s turn`);
   }
   const winConditions = () => {
     // horizontal win condition
     for (col = 0; col < getBoard.length; col++){
       if (allIsEqual(getBoard[col]) && getBoard[col][0] === "X"){
-        console.log("X Wins horizontal");
+        console.log(`${activePlayer.name} wins horizontal`);
         return true;
       }
       else if (allIsEqual(getBoard[col]) && getBoard[col][0] === "O"){
-        console.log(`O wins horizontal`);
+        console.log(`${activePlayer.name} wins horizontal`);
         return true;
       }
     }
     // vertical win condition
     for (col= 0; col < getBoard.length; col++){
-      let symbolRef = getBoard[col][0];
+      let symbolRef = getBoard[0][col];
       let win = true;
       if (symbolRef === "X" || symbolRef === "O"){
         for(row = 1; row < getBoard.length; row++){
@@ -65,7 +74,7 @@ function gameController(){
         continue;
       }
       if (win){
-        console.log(`${symbolRef} wins vertical`);
+        console.log(`${activePlayer.name} wins vertical`);
         return true;
       };
     };
@@ -80,7 +89,7 @@ function gameController(){
         }
       }
       if (win){
-        console.log(`${symbolRef} wins diagonal 1`)
+        console.log(`${activePlayer.name} wins diagonal 1`)
         return true;
       }
     }
@@ -97,14 +106,14 @@ function gameController(){
         col++;
       }
       if (win1){
-        console.log(`${symbolRef1} wins diagonal 2`)
+        console.log(`${activePlayer.name} wins diagonal 2`)
         return true;
       }
     }
   }
   const playARound = (row, column) => {   
     if (getBoard[row][column] === 0){
-      board.placeMark(row, column, getActivePlayer())
+      board.placeMark(row, column, getActivePlayer().symbol)
       if (winConditions()){
         console.log("game is done for");
       };
