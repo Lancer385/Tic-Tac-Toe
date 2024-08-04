@@ -37,25 +37,18 @@ function gameController(){
     board.printBoard();
     console.log(`${activePlayer} turn`);
   }
-  const playARound = (row, column) => {   
-    if (getBoard[row][column] === 0){
-      board.placeMark(row, column, getActivePlayer())
-      switchTurn();
-    }
-    else {
-      console.log("cell is already take, smh")
-    }
-    /* checks for rows
+  const winConditions = () => {
     for (col = 0; col < getBoard.length; col++){
       if (allIsEqual(getBoard[col]) && getBoard[col][0] === "X"){
-        console.log("X Wins");
+        console.log("X Wins horizontal");
+        return true;
       }
       else if (allIsEqual(getBoard[col]) && getBoard[col][0] === "O"){
-        console.log(`O wins`);
+        console.log(`O wins horizontal`);
+        return true;
       }
     }
-    */
-   /* checks for cols
+    // vertical win condition
     for (col= 0; col < getBoard.length; col++){
       let symbolRef = getBoard[col][0];
       let win = true;
@@ -71,10 +64,54 @@ function gameController(){
         continue;
       }
       if (win){
-        console.log(`${symbolRef} wins`);
+        console.log(`${symbolRef} wins vertical`);
+        return true;
       };
     };
-    */
+    //* diagonal win condition
+    let symbolRef = getBoard[0][0];
+    let win = true;
+    if (symbolRef === "X" || symbolRef === "O"){
+      for (row = 1; row < getBoard.length; row++){
+        if (symbolRef !== getBoard[row][row]){
+        win = false;
+        break;
+        }
+      }
+      if (win){
+        console.log(`${symbolRef} wins diagonal 1`)
+        return true;
+      }
+    }
+    // diagonal win condition 2 
+    let symbolRef1 = getBoard[0][2];
+    let win1 = true;
+    if (symbolRef1 === "X" || symbolRef1 === "O"){
+      let col = 1;
+      for (row = 1; row >= 0; row--){
+        if (symbolRef1 !== getBoard[col][row]){
+        win1 = false;
+        break;
+        }
+        col++;
+      }
+      if (win1){
+        console.log(`${symbolRef1} wins diagonal 2`)
+        return true;
+      }
+    }
+  }
+  const playARound = (row, column) => {   
+    if (getBoard[row][column] === 0){
+      board.placeMark(row, column, getActivePlayer())
+      switchTurn();
+    }
+    else {
+      console.log("cell is already take, smh")
+    }
+    if (winConditions()){
+      console.log("game is done for");
+    };
     printARound();
   };
 
@@ -86,3 +123,4 @@ function gameController(){
   };
 };
 const game = gameController();
+
