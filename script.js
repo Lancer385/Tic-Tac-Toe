@@ -38,6 +38,7 @@ function gameController(){
     console.log(`${activePlayer} turn`);
   }
   const winConditions = () => {
+    // horizontal win condition
     for (col = 0; col < getBoard.length; col++){
       if (allIsEqual(getBoard[col]) && getBoard[col][0] === "X"){
         console.log("X Wins horizontal");
@@ -104,14 +105,14 @@ function gameController(){
   const playARound = (row, column) => {   
     if (getBoard[row][column] === 0){
       board.placeMark(row, column, getActivePlayer())
+      if (winConditions()){
+        console.log("game is done for");
+      };
       switchTurn();
     }
     else {
       console.log("cell is already take, smh")
     }
-    if (winConditions()){
-      console.log("game is done for");
-    };
     printARound();
   };
 
