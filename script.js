@@ -43,7 +43,6 @@ function gameController(){
   const getActivePlayer = () => activePlayer;
   const printARound = () => {
     board.printBoard();
-    console.log(getBoard[0][0]);
     console.log(`${activePlayer.name}'s turn`);
   }
   const winConditions = () => {
@@ -115,14 +114,16 @@ function gameController(){
     if (getBoard[row][column] === 0){
       board.placeMark(row, column, getActivePlayer().symbol)
       if (winConditions()){
-        console.log("game is done for");
-      };
+        console.log(`${activePlayer.name} wins`);
+      }
+      else {
       switchTurn();
+      printARound();
+      };
     }
     else {
       console.log("cell is already take, smh")
-    }
-    printARound();
+    };
   };
 
   printARound();
