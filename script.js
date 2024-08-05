@@ -112,18 +112,16 @@ function gameController(){
   }
   const playARound = (row, column) => {   
     if (getBoard[row][column] === 0){
-      board.placeMark(row, column, getActivePlayer().symbol)
       if (winConditions()){
         console.log(`Game Over`);
+        return true;
       }
       else {
+      board.placeMark(row, column, getActivePlayer().symbol)
       switchTurn();
       printARound();
       };
     }
-    else {
-      console.log("cell is already take, smh")
-    };
   };
 
   printARound();
@@ -153,7 +151,13 @@ function screenRender(){
         }
         else {
           cellB.classList.remove("hidden");
+        };
+        if (cellB.textContent === "X"){
+          cellB.classList.add("cross");
         }
+        else {
+          cellB.classList.remove("cross");
+        };
         boardDiv.appendChild(cellB);
       })
     })
