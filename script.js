@@ -127,6 +127,8 @@ function gameController(){
   printARound();
 
   return {
+    playerOne:players[0].name,
+    playerTwo:players[1].name,
     playARound,
     getActivePlayer,
     getBoard: board.getBoard
@@ -146,12 +148,14 @@ function screenRender(){
         cellB.dataset.row = rowIndex;
         cellB.dataset.column = colIndex;
         cellB.textContent = cell;
+        // this is to hide the initial value
         if (cellB.textContent === "0"){
           cellB.classList.add("hidden");
         }
         else {
           cellB.classList.remove("hidden");
         };
+        // this is to make a different color for X
         if (cellB.textContent === "X"){
           cellB.classList.add("cross");
         }
