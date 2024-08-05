@@ -114,7 +114,7 @@ function gameController(){
     if (getBoard[row][column] === 0){
       board.placeMark(row, column, getActivePlayer().symbol)
       if (winConditions()){
-        console.log(`${activePlayer.name} wins`);
+        console.log(`Game Over`);
       }
       else {
       switchTurn();
@@ -130,8 +130,44 @@ function gameController(){
 
   return {
     playARound,
-    getActivePlayer
+    getActivePlayer,
+    getBoard: board.getBoard
   };
 };
-const game = gameController();
+
+function screenRender(){
+  const boardDiv = document.querySelector(".board");
+  const game = gameController();
+  const board = game.getBoard();
+  const update = ()=> {
+    boardDiv.textContent = "";
+    board.forEach((row, rowIndex) => { 
+      row.forEach((cell, colIndex) =>{
+        const cellB = document.createElement("button");
+        cellB.classList.add("cell");
+        cellB.dataset.row = rowIndex;
+        cellB.dataset.column = colIndex;
+        cellB.textContent = cell;
+        if (cellB.textContent === "0"){
+          cellB.classList.add("hidden");
+        }
+        else {
+          cellB.classList.remove("hidden");
+        }
+        boardDiv.appendChild(cellB);
+      })
+    })
+  }
+  function insertSymbol(e){
+    const column = e.target.dataset.column;
+    const row = e.target.dataset.row;
+    if (!column && !row) return;
+    game.playARound(row, column);
+    update();
+  }
+  boardDiv.addEventListener("click", insertSymbol);
+  update();
+}
+screenRender();
+
 
