@@ -19,8 +19,8 @@ function gameBoard(){
 
 
 function gameController(){
-  let playerOneName = "john";
-  let playerTwoName = "jasper";
+  let playerOneName = "Player One";
+  let playerTwoName = "Player Two";
   const players = [
   {
   name: playerOneName,
@@ -56,7 +56,7 @@ function gameController(){
         console.log(`${activePlayer.name} wins horizontal`);
         return true;
       }
-    }
+    };
     // vertical win condition
     for (col= 0; col < getBoard.length; col++){
       let symbolRef = getBoard[0][col];
@@ -66,12 +66,12 @@ function gameController(){
           if (symbolRef !== getBoard[row][col]){
             win = false;
             break;
-          }
-        }
+          };
+        };
       }
       else {
         continue;
-      }
+      };
       if (win){
         console.log(`${activePlayer.name} wins vertical`);
         return true;
@@ -85,13 +85,13 @@ function gameController(){
         if (symbolRef !== getBoard[row][row]){
         win = false;
         break;
-        }
-      }
+        };
+      };
       if (win){
         console.log(`${activePlayer.name} wins diagonal 1`)
         return true;
-      }
-    }
+      };
+    };
     // diagonal win condition 2 
     let symbolRef1 = getBoard[0][2];
     let win1 = true;
@@ -103,23 +103,20 @@ function gameController(){
         break;
         }
         col++;
-      }
+      };
       if (win1){
         console.log(`${activePlayer.name} wins diagonal 2`)
         return true;
-      }
-    }
-  }
-  const playARound = (row, column) => {   
+      };
+    };
+  };
+  const playARound = (row, column) => {
+    let win = winConditions();
     if (getBoard[row][column] === 0){
-      if (winConditions()){
-        console.log(`Game Over`);
-        return true;
-      }
-      else {
-      board.placeMark(row, column, getActivePlayer().symbol)
-      switchTurn();
-      printARound();
+      if (!win){
+        board.placeMark(row, column, getActivePlayer().symbol)
+        switchTurn();
+        printARound();
       };
     }
   };
