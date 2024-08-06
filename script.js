@@ -1,5 +1,5 @@
 function gameBoard(){
-  const board = [];
+  let board = [];
   const gridSize = 3;
   for (i = 0; i < gridSize; i++){
     board.push([]);
@@ -14,7 +14,11 @@ function gameBoard(){
   const printBoard = () => {
     console.log(board);
   };
-  return {getBoard, placeMark, printBoard};
+  const resetBoard = () => {
+    board = [];
+    console.log(board);
+  };
+  return {getBoard, placeMark, printBoard, resetBoard};
 };
 
 
@@ -48,14 +52,20 @@ function gameController(){
   const winConditions = () => {
     // horizontal win condition
     for (col = 0; col < getBoard.length; col++){
-      if (allIsEqual(getBoard[col]) && getBoard[col][0] === "X"){
-        console.log(`${activePlayer.name} wins horizontal`);
-        return true;
+      let symbolRef = getBoard[col][0];
+      let win = true;
+      if (symbolRef === "X" || symbolRef === "O"){
+        if (!allIsEqual(getBoard[col])){
+          win = false;
+        };
       }
-      else if (allIsEqual(getBoard[col]) && getBoard[col][0] === "O"){
-        console.log(`${activePlayer.name} wins horizontal`);
-        return true;
-      }
+      else {
+        continue;
+      };
+      if (win){
+        console.log(`${activePlayer.name} wins`);
+        return win;
+      };
     };
     // vertical win condition
     for (col= 0; col < getBoard.length; col++){
@@ -74,7 +84,7 @@ function gameController(){
       };
       if (win){
         console.log(`${activePlayer.name} wins vertical`);
-        return true;
+        return win;
       };
     };
     //* diagonal win condition
@@ -89,36 +99,35 @@ function gameController(){
       };
       if (win){
         console.log(`${activePlayer.name} wins diagonal 1`)
-        return true;
+        return win;
       };
     };
     // diagonal win condition 2 
-    let symbolRef1 = getBoard[0][2];
-    let win1 = true;
-    if (symbolRef1 === "X" || symbolRef1 === "O"){
+    symbolRef = getBoard[0][2];
+    win = true;
+    if (symbolRef === "X" || symbolRef === "O"){
       let col = 1;
       for (row = 1; row >= 0; row--){
-        if (symbolRef1 !== getBoard[col][row]){
-        win1 = false;
+        if (symbolRef !== getBoard[col][row]){
+        win = false;
         break;
         }
         col++;
       };
-      if (win1){
+      if (win){
         console.log(`${activePlayer.name} wins diagonal 2`)
-        return true;
+        return win;
       };
     };
   };
   const playARound = (row, column) => {
-    let win = winConditions();
     if (getBoard[row][column] === 0){
-      if (!win){
-        board.placeMark(row, column, getActivePlayer().symbol)
+      board.placeMark(row, column, getActivePlayer().symbol)
+      if (!winConditions()){
         switchTurn();
-        printARound();
       };
-    }
+      printARound();
+      };
   };
 
   printARound();
@@ -127,16 +136,21 @@ function gameController(){
     playerOne:players[0].name,
     playerTwo:players[1].name,
     playARound,
+    winConditions,
     getActivePlayer,
-    getBoard: board.getBoard
+    getBoard: board.getBoard,
+    reset: board.resetBoard
   };
 };
 
 function screenRender(){
   const boardDiv = document.querySelector(".board");
+  const turn = document.querySelector(".turn");
+  const retry = document.querySelector(".retry");
   const game = gameController();
   const board = game.getBoard();
   const update = ()=> {
+    turn.textContent = `${game.getActivePlayer().name}\nTURN`;
     boardDiv.textContent = "";
     board.forEach((row, rowIndex) => { 
       row.forEach((cell, colIndex) =>{
@@ -167,9 +181,19 @@ function screenRender(){
     const column = e.target.dataset.column;
     const row = e.target.dataset.row;
     if (!column && !row) return;
+    if (!game.winConditions()){
     game.playARound(row, column);
     update();
+    }
+    if (game.winConditions()){
+      update();
+      turn.textContent = `${game.getActivePlayer().name}\n WINS`;
+    };
+  };
+  function reset(){
+    game.reset();
   }
+  retry.addEventListener("click", reset);
   boardDiv.addEventListener("click", insertSymbol);
   update();
 }
