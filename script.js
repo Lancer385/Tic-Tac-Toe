@@ -144,6 +144,13 @@ function screenController(){
     circle: document.querySelector(".two")
   };
 
+  // just some sound effects
+  const sound = {
+    click: document.querySelector("#pop"),
+    win: document.querySelector("#ding"),
+    tie: document.querySelector("#chime")
+  };
+
 
   const retryButton = document.querySelector(".retry");
   const game = gameController();
@@ -177,9 +184,11 @@ function screenController(){
     });
     if (game.isGameOver()){
       status.innerHTML = `${game.getActivePlayer().name}<br>WINS`;
+      sound.win.play();
     };
     if (game.getTurnCounter() === 9){
       status.textContent = "TIE";
+      sound.tie.play();
     };
     names.cross.textContent = `${game.playerOne.name}`;
     names.circle.textContent = `${game.playerTwo.name}`;
@@ -192,6 +201,7 @@ function screenController(){
     const column = e.target.dataset.column;
     const row = e.target.dataset.row;
     if (!row && !column || (board[row][column] === game.playerOne.symbol || board[row][column] === game.playerTwo.symbol) || game.isGameOver()) {return};
+      sound.click.play();
       game.playARound(row, column);
       updateScreen();
   };
