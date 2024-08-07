@@ -102,7 +102,7 @@ function gameController(){
 
 
 
-  // handles each player turn
+  // handles each player turn as well as adding score for when a player win
   const playARound = (row, column) => {
       board.addSymbol(row, column, getActivePlayer().symbol)
       if (!isGameOver()){
