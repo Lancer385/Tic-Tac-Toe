@@ -32,21 +32,29 @@ function gameBoard(){
 function gameController(){
   const players = [
     {
-      name: "Player One",
+      name: "X",
       symbol: "X",
       score: 0
     }, 
     {
-      name: "Player Two",
+      name: "O",
       symbol: "O",
       score: 0
     }
   ];
   const board = gameBoard();
+  let turnCounter = 0;
+  const incraseCounter = () => {
+    turnCounter++;
+  };
+  const resetCounter = () => {
+    turnCounter = 0;
+  };
   let activePlayer = players[0];
   const switchTurn = () => {
   activePlayer = (activePlayer === players[0])? players[1] : players[0];
   };
+  const getTurnCounter = () => turnCounter;
   const getActivePlayer = () => activePlayer;
   const printARound = () => {
     board.printBoard();
@@ -69,7 +77,7 @@ function gameController(){
     let checkDiag = diag => diag.every(val => val === diag[0]);
     return checkDiag(diagCells) || checkDiag(diagCells2);
   };
-  const winConditions = () => {
+  const isGameOver = () => {
     let getBoard = board.getBoard()
     for (i = 0; i < getBoard.length; i++){
       if (isRowEqual(getBoard[i])){
@@ -87,10 +95,11 @@ function gameController(){
   const playARound = (row, column) => {
       board.placeMark(row, column, getActivePlayer().symbol)
       printARound();
-      if (!winConditions()){
+      if (!isGameOver()){
       switchTurn();
+      incraseCounter();
       }
-      if (winConditions()){
+      if (isGameOver()){
         getActivePlayer().score++;
       }
   };
@@ -102,7 +111,9 @@ function gameController(){
     playerTwo:players[1],
     playARound,
     switchTurn,
-    winConditions,
+    isGameOver,
+    getTurnCounter,
+    resetCounter,
     getActivePlayer,
     getBoard: board.getBoard,
     resetBoard: board.resetBoard
@@ -111,17 +122,21 @@ function gameController(){
 
 function screenController(){
   const boardDiv = document.querySelector(".board");
-  const turn = document.querySelector(".turn");
+  const status = document.querySelector(".status");
   const scores = {
     cross: document.querySelector(".cross"),
     circle: document.querySelector(".circle")
-  }
+  };
+  const names = {
+    cross: document.querySelector(".one"),
+    circle: document.querySelector(".two")
+  };
   const retryButton = document.querySelector(".retry");
   const game = gameController();
   let board = game.getBoard();
   const updateScreen = ()=> {
     board = game.getBoard();
-    turn.textContent = `${game.getActivePlayer().name}\nTURN`;
+    status.textContent = `${game.getActivePlayer().name}\nTURN`;
     boardDiv.textContent = "";
     board.forEach((row, rowIndex) => { 
       row.forEach((cell, colIndex) =>{
@@ -132,7 +147,7 @@ function screenController(){
         // only display the players symbol
         if (cell === game.playerOne.symbol || cell === game.playerTwo.symbol){
           cellB.textContent = cell;
-        }
+        };
         // this is for making a different color for x
         if (cellB.textContent === "X"){
           cellB.classList.add("cross");
@@ -143,25 +158,31 @@ function screenController(){
         boardDiv.appendChild(cellB);
       });
     });
-    if (game.winConditions()){
-      turn.textContent = `${game.getActivePlayer().name} WINS`;
+    if (game.isGameOver()){
+      status.textContent = `${game.getActivePlayer().name} WINS`;
     };
-    scores.cross.innerHTML = `X<br>${game.playerOne.score}`
-    scores.circle.innerHTML = `O<br>${game.playerTwo.score}`
-  }
+    if (game.getTurnCounter() === 9){
+      status.textContent = "TIE";
+    };
+    names.cross.textContent = `${game.playerOne.name}`;
+    names.circle.textContent = `${game.playerTwo.name}`;
+    scores.cross.innerHTML = `X<br>${game.playerOne.score}`;
+    scores.circle.innerHTML = `O<br>${game.playerTwo.score}`;
+  };
   function insertSymbol(e){
     const column = e.target.dataset.column;
     const row = e.target.dataset.row;
-    if (!row && !column || (board[row][column] === game.playerOne.symbol || board[row][column] === game.playerTwo.symbol) || game.winConditions()) {return};
+    if (!row && !column || (board[row][column] === game.playerOne.symbol || board[row][column] === game.playerTwo.symbol) || game.isGameOver()) {return};
       game.playARound(row, column);
       updateScreen();
   };
   function retry(){
     game.resetBoard();
-    game.winConditions();
+    game.isGameOver();
     if (game.getActivePlayer().symbol === game.playerTwo.symbol){
       game.switchTurn();
     };
+    game.resetCounter();
     updateScreen();
   };
   retryButton.addEventListener("click", retry);
