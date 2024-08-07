@@ -31,27 +31,26 @@ body {
 
 .info, .tools {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     width: 420px;
     height: 100px;
     gap: 10px;
-    border: 5px solid white;
 }
-.info div {
+.info div, .tools button{
     display: flex;
+    justify-content: center;
     align-items: center;
-    width: 100px;
+    width: 120px;
     border-radius: 10px;
     outline: none;
     background-color: #1F3540;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    font-size: 16px;
-    line-height: 2;
     color: #071B26;
     font-weight: 700;
     text-align: center;
     background-color: #A8BEC9;
 }
+
 .cell {
     border: none;
     border-radius: 10px;
@@ -64,10 +63,16 @@ body {
     color: #EEAC34;
 }
 
-.hidden {
-    color: #1F3540;
-}
+
 
 .cross {
     color: #3FCAC7;
+}
+
+.turn {
+    font-size: 16px;
+    line-height: 2;
+}
+.score {
+    font-size: 40px;
 }

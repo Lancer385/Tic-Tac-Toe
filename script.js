@@ -30,16 +30,16 @@ function gameBoard(){
 
 
 function gameController(){
-  let playerOneName = "Player One";
-  let playerTwoName = "Player Two";
   const players = [
     {
-      name: playerOneName,
-      symbol: "X"
+      name: "Player One",
+      symbol: "X",
+      score: 0
     }, 
     {
-      name: playerTwoName,
-      symbol: "O"
+      name: "Player Two",
+      symbol: "O",
+      score: 0
     }
   ];
   const board = gameBoard();
@@ -73,16 +73,13 @@ function gameController(){
     let getBoard = board.getBoard()
     for (i = 0; i < getBoard.length; i++){
       if (isRowEqual(getBoard[i])){
-        console.log("row win")
         return true;
       };
       if (isColEqual(getBoard, i)){
-        console.log("column win");
         return true;
       };
     };
     if (isDiagEqual(getBoard)){
-      console.log("diagonal win")
       return true;
     };
     return false;
@@ -92,6 +89,9 @@ function gameController(){
       printARound();
       if (!winConditions()){
       switchTurn();
+      }
+      if (winConditions()){
+        getActivePlayer().score++;
       }
   };
 
@@ -109,13 +109,17 @@ function gameController(){
   };
 };
 
-function screenRender(){
+function screenController(){
   const boardDiv = document.querySelector(".board");
   const turn = document.querySelector(".turn");
+  const scores = {
+    cross: document.querySelector(".cross"),
+    circle: document.querySelector(".circle")
+  }
   const retryButton = document.querySelector(".retry");
   const game = gameController();
   let board = game.getBoard();
-  const update = ()=> {
+  const updateScreen = ()=> {
     board = game.getBoard();
     turn.textContent = `${game.getActivePlayer().name}\nTURN`;
     boardDiv.textContent = "";
@@ -140,15 +144,17 @@ function screenRender(){
       });
     });
     if (game.winConditions()){
-      turn.textContent = `${game.getActivePlayer().name}\n WINS`;
+      turn.textContent = `${game.getActivePlayer().name} WINS`;
     };
+    scores.cross.innerHTML = `X<br>${game.playerOne.score}`
+    scores.circle.innerHTML = `O<br>${game.playerTwo.score}`
   }
   function insertSymbol(e){
     const column = e.target.dataset.column;
     const row = e.target.dataset.row;
     if (!row && !column || (board[row][column] === game.playerOne.symbol || board[row][column] === game.playerTwo.symbol) || game.winConditions()) {return};
       game.playARound(row, column);
-      update();
+      updateScreen();
   };
   function retry(){
     game.resetBoard();
@@ -156,12 +162,12 @@ function screenRender(){
     if (game.getActivePlayer().symbol === game.playerTwo.symbol){
       game.switchTurn();
     };
-    update();
+    updateScreen();
   };
   retryButton.addEventListener("click", retry);
   boardDiv.addEventListener("click", insertSymbol);
-  update();
+  updateScreen();
 };
-screenRender();
+screenController();
 
 
