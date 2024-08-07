@@ -18,13 +18,9 @@ function gameBoard(){
   const placeMark = (row, column, player) => {
       board[row][column] = player;
   };
-  const printBoard = () => {
-    console.log(board);
-  };
   return {
     getBoard,
     placeMark,
-    printBoard,
     resetBoard: makeBoard};
 };
 
@@ -32,12 +28,12 @@ function gameBoard(){
 function gameController(){
   const players = [
     {
-      name: "X",
+      name: "Player One",
       symbol: "X",
       score: 0
     }, 
     {
-      name: "O",
+      name: "Player Two",
       symbol: "O",
       score: 0
     }
@@ -56,10 +52,6 @@ function gameController(){
   };
   const getTurnCounter = () => turnCounter;
   const getActivePlayer = () => activePlayer;
-  const printARound = () => {
-    board.printBoard();
-    console.log(`${activePlayer.name}'s turn`);
-  }
   const isRowEqual = arr => arr.every(val => val === arr[0]);
   const isColEqual = (board, col) => {
     let colCells = board.map(row => row[col]);
@@ -94,7 +86,6 @@ function gameController(){
   };
   const playARound = (row, column) => {
       board.placeMark(row, column, getActivePlayer().symbol)
-      printARound();
       if (!isGameOver()){
       switchTurn();
       incraseCounter();
@@ -103,9 +94,6 @@ function gameController(){
         getActivePlayer().score++;
       }
   };
-
-  printARound();
-
   return {
     playerOne:players[0],
     playerTwo:players[1],
@@ -136,7 +124,7 @@ function screenController(){
   let board = game.getBoard();
   const updateScreen = ()=> {
     board = game.getBoard();
-    status.textContent = `${game.getActivePlayer().name}\nTURN`;
+    status.innerHTML = `${game.getActivePlayer().name}<br>TURN`;
     boardDiv.textContent = "";
     board.forEach((row, rowIndex) => { 
       row.forEach((cell, colIndex) =>{
@@ -150,16 +138,16 @@ function screenController(){
         };
         // this is for making a different color for x
         if (cellB.textContent === "X"){
-          cellB.classList.add("cross");
+          cellB.classList.add("unique");
         }
         else {
-          cellB.classList.remove("cross");
+          cellB.classList.remove("unique");
         };
         boardDiv.appendChild(cellB);
       });
     });
     if (game.isGameOver()){
-      status.textContent = `${game.getActivePlayer().name} WINS`;
+      status.innerHTML = `${game.getActivePlayer().name}<br>WINS`;
     };
     if (game.getTurnCounter() === 9){
       status.textContent = "TIE";
@@ -185,6 +173,15 @@ function screenController(){
     game.resetCounter();
     updateScreen();
   };
+  function rename(player){
+    let userPrompt = prompt("Insert Your Name Here");
+    if (userPrompt !== null){
+    player.name = userPrompt;
+    updateScreen();
+    };
+  };
+  names.cross.addEventListener("click", () => rename(game.playerOne));
+  names.circle.addEventListener("click", () => rename(game.playerTwo));
   retryButton.addEventListener("click", retry);
   boardDiv.addEventListener("click", insertSymbol);
   updateScreen();
