@@ -1,12 +1,19 @@
 function gameBoard(){
-  let board = [];
+  let board;
   const gridSize = 3;
-  for (i = 0; i < gridSize; i++){
-    board.push([]);
-    for(j = 0; j < gridSize; j++){
-      board[i].push(0);
-    }
-  };
+  let cells;
+  const makeBoard = ()=> {
+    board = [];
+    cells = 1;
+    for (i = 0; i < gridSize; i++){
+      board.push([]);
+      for(j = 0; j < gridSize; j++){
+        board[i].push(cells);
+        cells++;
+      }
+    };
+  }
+  makeBoard();
   const getBoard = () => board;
   const placeMark = (row, column, player) => {
       board[row][column] = player;
@@ -14,11 +21,11 @@ function gameBoard(){
   const printBoard = () => {
     console.log(board);
   };
-  const resetBoard = () => {
-    board = [];
-    console.log(board);
-  };
-  return {getBoard, placeMark, printBoard, resetBoard};
+  return {
+    getBoard,
+    placeMark,
+    printBoard,
+    resetBoard: makeBoard};
 };
 
 
@@ -26,20 +33,16 @@ function gameController(){
   let playerOneName = "Player One";
   let playerTwoName = "Player Two";
   const players = [
-  {
-  name: playerOneName,
-  symbol: "X"
-  }
-  , 
-  {
-    name: playerTwoName,
-    symbol: "O"
-  }
+    {
+      name: playerOneName,
+      symbol: "X"
+    }, 
+    {
+      name: playerTwoName,
+      symbol: "O"
+    }
   ];
   const board = gameBoard();
-  const getBoard = board.getBoard();
-  const allIsEqual = arr => arr.every(val => val === arr[0]);
-
   let activePlayer = players[0];
   const switchTurn = () => {
   activePlayer = (activePlayer === players[0])? players[1] : players[0];
@@ -49,107 +52,71 @@ function gameController(){
     board.printBoard();
     console.log(`${activePlayer.name}'s turn`);
   }
+  const isRowEqual = arr => arr.every(val => val === arr[0]);
+  const isColEqual = (board, col) => {
+    let colCells = board.map(row => row[col]);
+    return colCells.every(val => val === colCells[0]);
+  };
+  const isDiagEqual = (board) => {
+    let diagCells = [];
+    let diagCells2 = [];
+    let col = board.length - 1;
+    for (i = 0; i < board.length; i++){
+      diagCells.push(board[i][i]);
+      diagCells2.push(board[i][col]);
+      col--;
+    };
+    let checkDiag = diag => diag.every(val => val === diag[0]);
+    return checkDiag(diagCells) || checkDiag(diagCells2);
+  };
   const winConditions = () => {
-    // horizontal win condition
-    for (col = 0; col < getBoard.length; col++){
-      let symbolRef = getBoard[col][0];
-      let win = true;
-      if (symbolRef === "X" || symbolRef === "O"){
-        if (!allIsEqual(getBoard[col])){
-          win = false;
-        };
-      }
-      else {
-        continue;
+    let getBoard = board.getBoard()
+    for (i = 0; i < getBoard.length; i++){
+      if (isRowEqual(getBoard[i])){
+        console.log("row win")
+        return true;
       };
-      if (win){
-        console.log(`${activePlayer.name} wins`);
-        return win;
+      if (isColEqual(getBoard, i)){
+        console.log("column win");
+        return true;
       };
     };
-    // vertical win condition
-    for (col= 0; col < getBoard.length; col++){
-      let symbolRef = getBoard[0][col];
-      let win = true;
-      if (symbolRef === "X" || symbolRef === "O"){
-        for(row = 1; row < getBoard.length; row++){
-          if (symbolRef !== getBoard[row][col]){
-            win = false;
-            break;
-          };
-        };
-      }
-      else {
-        continue;
-      };
-      if (win){
-        console.log(`${activePlayer.name} wins vertical`);
-        return win;
-      };
+    if (isDiagEqual(getBoard)){
+      console.log("diagonal win")
+      return true;
     };
-    //* diagonal win condition
-    let symbolRef = getBoard[0][0];
-    let win = true;
-    if (symbolRef === "X" || symbolRef === "O"){
-      for (row = 1; row < getBoard.length; row++){
-        if (symbolRef !== getBoard[row][row]){
-        win = false;
-        break;
-        };
-      };
-      if (win){
-        console.log(`${activePlayer.name} wins diagonal 1`)
-        return win;
-      };
-    };
-    // diagonal win condition 2 
-    symbolRef = getBoard[0][2];
-    win = true;
-    if (symbolRef === "X" || symbolRef === "O"){
-      let col = 1;
-      for (row = 1; row >= 0; row--){
-        if (symbolRef !== getBoard[col][row]){
-        win = false;
-        break;
-        }
-        col++;
-      };
-      if (win){
-        console.log(`${activePlayer.name} wins diagonal 2`)
-        return win;
-      };
-    };
+    return false;
   };
   const playARound = (row, column) => {
-    if (getBoard[row][column] === 0){
       board.placeMark(row, column, getActivePlayer().symbol)
-      if (!winConditions()){
-        switchTurn();
-      };
       printARound();
-      };
+      if (!winConditions()){
+      switchTurn();
+      }
   };
 
   printARound();
 
   return {
-    playerOne:players[0].name,
-    playerTwo:players[1].name,
+    playerOne:players[0],
+    playerTwo:players[1],
     playARound,
+    switchTurn,
     winConditions,
     getActivePlayer,
     getBoard: board.getBoard,
-    reset: board.resetBoard
+    resetBoard: board.resetBoard
   };
 };
 
 function screenRender(){
   const boardDiv = document.querySelector(".board");
   const turn = document.querySelector(".turn");
-  const retry = document.querySelector(".retry");
+  const retryButton = document.querySelector(".retry");
   const game = gameController();
-  const board = game.getBoard();
+  let board = game.getBoard();
   const update = ()=> {
+    board = game.getBoard();
     turn.textContent = `${game.getActivePlayer().name}\nTURN`;
     boardDiv.textContent = "";
     board.forEach((row, rowIndex) => { 
@@ -158,15 +125,11 @@ function screenRender(){
         cellB.classList.add("cell");
         cellB.dataset.row = rowIndex;
         cellB.dataset.column = colIndex;
-        cellB.textContent = cell;
-        // this is to hide the initial value
-        if (cellB.textContent === "0"){
-          cellB.classList.add("hidden");
+        // only display the players symbol
+        if (cell === game.playerOne.symbol || cell === game.playerTwo.symbol){
+          cellB.textContent = cell;
         }
-        else {
-          cellB.classList.remove("hidden");
-        };
-        // this is to make a different color for X
+        // this is for making a different color for x
         if (cellB.textContent === "X"){
           cellB.classList.add("cross");
         }
@@ -174,29 +137,31 @@ function screenRender(){
           cellB.classList.remove("cross");
         };
         boardDiv.appendChild(cellB);
-      })
-    })
+      });
+    });
+    if (game.winConditions()){
+      turn.textContent = `${game.getActivePlayer().name}\n WINS`;
+    };
   }
   function insertSymbol(e){
     const column = e.target.dataset.column;
     const row = e.target.dataset.row;
-    if (!column && !row) return;
-    if (!game.winConditions()){
-    game.playARound(row, column);
-    update();
-    }
-    if (game.winConditions()){
+    if (!row && !column || (board[row][column] === game.playerOne.symbol || board[row][column] === game.playerTwo.symbol) || game.winConditions()) {return};
+      game.playARound(row, column);
       update();
-      turn.textContent = `${game.getActivePlayer().name}\n WINS`;
-    };
   };
-  function reset(){
-    game.reset();
-  }
-  retry.addEventListener("click", reset);
+  function retry(){
+    game.resetBoard();
+    game.winConditions();
+    if (game.getActivePlayer().symbol === game.playerTwo.symbol){
+      game.switchTurn();
+    };
+    update();
+  };
+  retryButton.addEventListener("click", retry);
   boardDiv.addEventListener("click", insertSymbol);
   update();
-}
+};
 screenRender();
 
 
