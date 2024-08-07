@@ -7,8 +7,6 @@ body {
     background-color: #192A32;
     justify-content: center;
     align-items: center;
-    gap: 20px;
-    flex-direction: column;
 }
 
 .board {
@@ -41,24 +39,28 @@ body {
     align-items: center;
     width: 120px;
     border-radius: 15px;
-    outline: none;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     font-weight: 700;
     text-align: center;
+    border: none;
 }
 
 .cell {
     border: none;
     border-radius: 10px;
-    outline: none;
     background-color: #1F3540;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     font-size: 85px;
     font-weight: 900;
-    font-family: 'Bebas Neue', sans-serif;
     color: #EEAC34;
 }
 
+.cell:hover {
+    background-color: #354d5b;
+}
+.cell:active {
+    background-color: #1d2c34;
+}
 
 
 .unique {
@@ -72,6 +74,13 @@ body {
     font-size: 20px;
     line-height: 1.5;
 }
+
+.retry:hover {
+    background-color: #6e8996;
+}
+.retry:active {
+    background-color: #4a5d66;
+}
 .players {
     font-size: 20px;
 }
@@ -80,10 +89,24 @@ body {
 }
 
 .two, .circle {
+    color: #1F3540;
     background-color: #EEAC34;
 }
-
 .one, .cross {
+    color: #1F3540;
     background-color: #3FCAC7;
 }
 
+.two:hover{
+    background-color: #e2b45e;
+}
+.two:active {
+    background-color: #bb8828;
+}
+
+.one:hover{
+    background-color: #3be3e0;
+}
+.one:active{
+    background-color: #319a98;
+}
